@@ -9,16 +9,16 @@ public class Gmail extends Email
 {
 
     int inboxCapacity; //maximum number of mails inbox can store
-    Queue<Mail> inbo;
-    Queue<Mail> trash;
+    ArrayList<Mail> inbo;
+    ArrayList<Mail> trash;
     //Inbox: Stores mails. Each mail has date (Date), sender (String), message (String). It is guaranteed that message is distinct for all mails.
     //Trash: Stores mails. Each mail has date (Date), sender (String), message (String)
     public Gmail(String emailId, int inboxCapacity)
     {
         this.setEmailId(emailId);
         this.inboxCapacity = inboxCapacity;
-        inbo = new LinkedList<>();
-        trash = new LinkedList<>();
+        inbo = new ArrayList<>();
+        trash = new ArrayList<>();
     }
 
     public Gmail()
@@ -38,7 +38,8 @@ public class Gmail extends Email
         }
         else
         {
-            trash.add(inbo.remove());
+            trash.add(inbo.get(0));
+            inbo.remove(0);
             inbo.add(m);
         }
     }
@@ -47,20 +48,15 @@ public class Gmail extends Email
     {
         // Each message is distinct
         // If the given message is found in any mail in the inbox, move the mail to trash, else do nothing
-        int n = inbo.size();
-        while(n>0)
+        for(Mail m : inbo)
         {
-            Mail m = inbo.remove();
             if(m.message.equals(message))
             {
                 trash.add(m);
-                n--;
-                continue;
+                inbo.remove(m);
+                break;
             }
-            inbo.add(m);
-            n--;
         }
-//        trash.remove();
     }
 
     public String findOldestMessage()
@@ -68,7 +64,7 @@ public class Gmail extends Email
         // If the inbox is empty, return null
         // Else, return the message of the latest mail present in the inbox
         if(inbo.size() == 0) return null;
-        return inbo.peek().message;
+        return inbo.get(0).message;
     }
 
     public String findLatestMessage()
@@ -76,33 +72,20 @@ public class Gmail extends Email
         // If the inbox is empty, return null
         // Else, return the message of the oldest mail present in the inbox
         if(inbo.size() == 0) return null;
-        int n = inbo.size();
-        while(n>1)
-        {
-            Mail m = inbo.remove();
-            inbo.add(m);
-            n--;
-        }
-        Mail m = inbo.remove();
-        inbo.add(m);
-        return m.message;
+        return inbo.get(inboxCapacity-1).message;
     }
 
     public int findMailsBetweenDates(Date start, Date end)
     {
         //find number of mails in the inbox which are received between given dates
         //It is guaranteed that start date <= end date
-        int n = inbo.size();
         int count = 0;
         boolean flag = false;
-        while(n>0)
+        for(Mail m : inbo)
         {
             if(flag) count++;
-            Mail m = inbo.remove();
             if(m.date.compareTo(start)<=0 && end.compareTo(m.date)>=0) flag = true;
             else flag = false;
-            inbo.add(m);
-            n--;
         }
         return count;
     }
@@ -120,7 +103,7 @@ public class Gmail extends Email
 
     public void emptyTrash(){
         // clear all mails in the trash
-        trash = new LinkedList<>();
+        trash = new ArrayList<>();
     }
 
     public int getInboxCapacity()
