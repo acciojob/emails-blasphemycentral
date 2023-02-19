@@ -32,16 +32,12 @@ public class Gmail extends Email
         // 1. Each mail in the inbox is distinct.
         // 2. The mails are received in non-decreasing order. This means that the date of a new mail is greater than equal to the dates of mails received already.
         Mail m = new Mail(date, sender, message);
-        if(inbo.size() < inboxCapacity)
-        {
-            inbo.add(m);
-        }
-        else
+        if (inbo.size() >= inboxCapacity)
         {
             trash.add(inbo.get(0));
             inbo.remove(0);
-            inbo.add(m);
         }
+        inbo.add(m);
     }
 
     public void deleteMail(String message)
@@ -72,7 +68,7 @@ public class Gmail extends Email
         // If the inbox is empty, return null
         // Else, return the message of the oldest mail present in the inbox
         if(inbo.size() == 0) return null;
-        return inbo.get(inboxCapacity-1).message;
+        return inbo.get(inbo.size()-1).message;
     }
 
     public int findMailsBetweenDates(Date start, Date end)
@@ -109,9 +105,11 @@ public class Gmail extends Email
     public int getInboxCapacity()
     {
         // Return the maximum number of mails that can be stored in the inbox
-        return inboxCapacity;
+        return this.inboxCapacity;
     }
-
+    public void setInboxcapacity(int inboxCapacity){
+        this.inboxCapacity = inboxCapacity;
+    }
     class Mail
     {
         Date date;
