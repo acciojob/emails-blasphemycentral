@@ -15,10 +15,10 @@ public class Gmail extends Email
     //Trash: Stores mails. Each mail has date (Date), sender (String), message (String)
     public Gmail(String emailId, int inboxCapacity)
     {
-        this.setEmailId(emailId);
+        super(emailId);
         this.inboxCapacity = inboxCapacity;
-        inbo = new ArrayList<>();
-        trash = new ArrayList<>();
+        this.inbo = new ArrayList<>();
+        this.trash = new ArrayList<>();
     }
 
     public Gmail()
@@ -32,7 +32,7 @@ public class Gmail extends Email
         // 1. Each mail in the inbox is distinct.
         // 2. The mails are received in non-decreasing order. This means that the date of a new mail is greater than equal to the dates of mails received already.
         Mail m = new Mail(date, sender, message);
-        if (inbo.size() >= inboxCapacity)
+        if (inbo.size() == inboxCapacity)
         {
             trash.add(inbo.get(0));
             inbo.remove(0);
@@ -50,7 +50,6 @@ public class Gmail extends Email
             {
                 trash.add(m);
                 inbo.remove(m);
-                break;
             }
         }
     }
@@ -76,12 +75,9 @@ public class Gmail extends Email
         //find number of mails in the inbox which are received between given dates
         //It is guaranteed that start date <= end date
         int count = 0;
-        boolean flag = false;
         for(Mail m : inbo)
         {
-            if(flag) count++;
-            if(m.date.compareTo(start)<=0 && end.compareTo(m.date)>=0) flag = true;
-            else flag = false;
+            if(m.date.compareTo(start)>=0 && end.compareTo(m.date)<=0)count++;
         }
         return count;
     }
